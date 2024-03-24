@@ -14,7 +14,7 @@ collection = db.create_collection("music_vector2", dimension=5, metric="cosine")
 print(collection)
 
 
-file_path = "./data/music_vector_metadata.json"
+file_path = "./data/input_datastax/music_vector_metadata.json"
 # Insert documents into the collection
 
 with open(file_path, 'r') as file:
@@ -26,8 +26,8 @@ res = collection.insert_many(documents)
 print(res)
 
 
-#inputsong vector
-input_song_vector = [0.15, 0.1, 0.1, 0.35, 0.55]
+#inputsong vector - User input - Testing
+input_song_vector = [[0.15, 0.1, 0.1, 0.35, 0.55],[0.15, 0.1, 0.1, 0.35, 0.55]]
 results = collection.vector_find(input_song_vector, limit=15, fields={"text", "$vector"})
 
 for document in results:
