@@ -1,85 +1,55 @@
-#bach Download script
-
-# /data /
-#It downloads to download_s3_directory
-
-import csv
-import requests
 import os
+import boto3
+from botocore.exceptions import ClientError
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import concurrent.futures
 
+# Example usage parameters
+bucket_name = 'mp3project-bucket'  # S3 bucket name
+s3_folder = 'audio/test'  # Folder in the S3 bucket to download files from
+local_folder_path = '/Users/bach/Documents/MP3-Project/downloads'  # Local directory to save downloaded files
+aws_region = os.environ.get('AWS_REGION', 'us-east-2')  # AWS region of the S3 bucket
+max_workers = min(50, os.cpu_count() + 4)  # Maximum number of concurrent download threads
 
-def download_file(api_base_url, download_path, local_folder_path, file_name):
-    """
-    Downloads a single file from an S3 bucket through an API Gateway using HTTP GET requests.
-    Returns the size of the downloaded file in bytes.
+def download_file(s3_client, bucket_name, s3_key, local_path):
+    try:
+        s3_client.download_file(bucket_name, s3_key, local_path)
+        print(f"Successfully downloaded {s3_key} to {local_path}.")
+    except Exception as e:
+        print(f"Failed to download {s3_key}. Error: {e}")
+
+def download_files(bucket_name, s3_folder, local_folder_path, aws_region):
+    print("Starting download...")
     
-    Parameters:
-    - api_base_url: The base URL of the API Gateway endpoint.
-    - download_path: The path in the S3 bucket where the file is located.
-    - local_folder_path: The local folder path where the file will be saved.
-    - file_name: The name of the file to download.
-    """
-    key = f"{download_path}%2F{file_name}"
-    api_url = f"{api_base_url}?key={key}"
-    local_file_path = os.path.join(local_folder_path, file_name)
-
-    response = requests.get(api_url, stream=True)
-    if response.status_code == 200:
-        with open(local_file_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        print(f"Downloaded {file_name} successfully.")
-        return os.path.getsize(local_file_path)  # Return the size of the downloaded file
-    else:
-        print(f"Failed to download {file_name}. Status code: {response.status_code}")
-        return 0  # Return 0 if the download failed
-
-def download_files_from_listing(api_base_url, download_path, local_folder_path, listing_file_name='listing.csv'):
-    """
-    Downloads files listed in a CSV from an S3 bucket to a local folder.
-    Prints the total download time and the total size of the files downloaded.
+    # Start timing
+    start_time = time.time()
     
-    Parameters:
-    - api_base_url: The base URL of the API Gateway endpoint.
-    - download_path: The path in the S3 bucket where the files are located.
-    - local_folder_path: The local folder path where files will be saved.
-    - listing_file_name: The name of the CSV file that lists the files to download.
-    """
-    start_time = time.time()  # Start the timer
-    total_size = 0  # Initialize the total size of the files downloaded
-    # Determine the optimal number of threads for parallel downloading
-    max_workers = 10
+    # Ensure the local folder exists
+    os.makedirs(local_folder_path, exist_ok=True)
+    
+    # Create an S3 client with the specified region
+    s3 = boto3.client('s3', region_name=aws_region)
 
-    # First, download the listing.csv file
-    listing_file_path = os.path.join(local_folder_path, listing_file_name)
-    total_size += download_file(api_base_url, download_path, local_folder_path, listing_file_name)
+    # List objects in the specified S3 folder
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=s3_folder)
 
-    # Read the listing.csv file to get the list of files
-    with open(listing_file_path, mode='r', newline='') as file:
-        reader = csv.reader(file)
-        file_names = [row[0] for row in reader]
+    # Use ThreadPoolExecutor to download files in parallel
+    with concurrent.futures.ThreadPoolExecutor(max_workers) as executor:
+        futures = []
+        if 'Contents' in objects:
+            for obj in objects['Contents']:
+                s3_key = obj['Key']
+                local_file_name = os.path.basename(s3_key)
+                local_path = os.path.join(local_folder_path, local_file_name)
+                # Schedule the file to be downloaded using a thread
+                futures.append(executor.submit(download_file, s3, bucket_name, s3_key, local_path))
+            
+            # Wait for all futures to complete
+            for future in concurrent.futures.as_completed(futures):
+                future.result()  # This will re-raise any exceptions caught
 
-    # Download each file listed in the CSV using concurrent requests
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(download_file, api_base_url, download_path, local_folder_path, name): name for name in file_names}
-        for future in as_completed(futures):
-            file_size = future.result()
-            total_size += file_size  # Accumulate the size of each file downloaded
+    # End timing
+    end_time = time.time()
+    print(f"Finished downloading. Time taken: {end_time - start_time:.2f} seconds.")
 
-    elapsed_time = time.time() - start_time
-    print(f"Total download time: {elapsed_time:.2f} seconds")
-    print(f"Total size downloaded: {total_size / (1024 * 1024):.2f} MB")
-
-if __name__ == "__main__":
-    api_base_url = 'Ping Bach for API'
-    download_path = 'mp3project-bucket/audio/test'  # Path in the S3 bucket
-    local_folder_path = './data'  # Local folder path
-
-    # Ensure the local directory exists
-    if not os.path.exists(local_folder_path):
-        os.makedirs(local_folder_path)
-
-    # Download files listed in the CSV and measure download time and size
-    download_files_from_listing(api_base_url, download_path, local_folder_path)
+download_files(bucket_name, s3_folder, local_folder_path, aws_region)
