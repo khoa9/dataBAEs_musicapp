@@ -85,6 +85,7 @@ def get_metadata_df(json_path):
     
     return metadata_df
 
+#everything_meta_df = kaggle_df + spotify_df 
 
 # Create function to get completed df with vector and meta data
 def get_completed_df(json_path, song_path):
@@ -107,6 +108,9 @@ def get_completed_df(json_path, song_path):
     
     # Create metadata_df and join with vector_idf for a completed df
     metadata_df = get_metadata_df(json_path)
+    #spotify_metadata_df = get_metadata_df(csv_path)
+    
+
     completed_df = pd.merge(metadata_df, vector_df, on="track_id", how='inner')
 
     return completed_df
