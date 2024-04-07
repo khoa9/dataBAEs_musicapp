@@ -5,8 +5,8 @@ import time
 import concurrent.futures
 
 # Example usage
-folder_path = '/Users/bach/Documents/MP3-Project/test/archive (1)'  # Update this to your folder path
-s3_folder = 'audio/test'  # Folder within the S3 bucket
+folder_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/mp3'  # Update this to your folder path
+s3_folder = 'audio/training_data'  # Folder within the S3 bucket
 bucket_name = 'mp3project-bucket'  # Update this to your S3 bucket name
 aws_region = os.environ.get('AWS_REGION', 'us-east-2')  # Use AWS_REGION environment variable if set, else default
 max_workers = min(50, os.cpu_count() + 4)
@@ -28,7 +28,7 @@ def upload_files(folder_path, bucket_name, aws_region, s3_folder):
     s3 = boto3.client('s3', region_name=aws_region)
 
     # Use ThreadPoolExecutor to upload files in parallel
-    with concurrent.futures.ThreadPoolExecutor(max_workers) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         futures = []
         for subdir, dirs, files in os.walk(folder_path):
             for file in files:
