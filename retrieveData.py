@@ -8,8 +8,12 @@ import concurrent.futures
 bucket_name = 'mp3project-bucket'  # S3 bucket name
 s3_folder = 'audio/test'  # Folder in the S3 bucket to download files from
 local_folder_path = '/Users/bach/Documents/MP3-Project/downloads'  # Local directory to save downloaded files
-aws_region = os.environ.get('AWS_REGION', 'us-east-2')  # AWS region of the S3 bucket
+aws_region = 'us-east-2'  # AWS region of the S3 bucket
 max_workers = min(50, os.cpu_count() + 4)  # Maximum number of concurrent download threads
+
+# AWS Credentials - Ping me for the KEY, please do not commit the key to github
+aws_access_key_id = 'YOUR_ACCESS_KEY'
+aws_secret_access_key = 'YOUR_SECRET_KEY' 
 
 def download_file(s3_client, bucket_name, s3_key, local_path):
     try:
@@ -27,8 +31,10 @@ def download_files(bucket_name, s3_folder, local_folder_path, aws_region):
     # Ensure the local folder exists
     os.makedirs(local_folder_path, exist_ok=True)
     
-    # Create an S3 client with the specified region
-    s3 = boto3.client('s3', region_name=aws_region)
+    # Create an S3 client with the specified region and credentials
+    s3 = boto3.client('s3', region_name=aws_region, 
+                      aws_access_key_id=aws_access_key_id, 
+                      aws_secret_access_key=aws_secret_access_key)
 
     # List objects in the specified S3 folder
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=s3_folder)
