@@ -1,12 +1,19 @@
+### THIS IS JUST A TEST FILE - DELETE IT LATER
+
+
 #pip install --upgrade astrapy
+
+
+
+
 # Added for testing
 import json
 from astrapy.db import AstraDB
 
 # Initialize the client
 db = AstraDB(
-  token="AstraCS:jntLCTXPzPfOtuOHhOvAOMPG:96e7192bc774ff3dce939307108a8eec19ca972820b0095e2a53beffe73b1036",
-  api_endpoint="https://769d9e28-d2b7-45e7-9af8-0cabca7e3657-us-east-1.apps.astra.datastax.com")
+        token="AstraCS:cJRHkPPfbcQCaJFKxnFjJoUE:d0eb7d0643c1255dd583daac12a86710650813c6f97f407b42399746d77be7a4",
+        api_endpoint="https://be61fb62-4f40-45db-8cd0-14c061a597ff-us-east-1.apps.astra.datastax.com")
 
 print(f"Connected to Astra DB: {db.get_collections()}")
 
