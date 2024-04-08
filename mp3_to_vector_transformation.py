@@ -69,7 +69,7 @@ def get_metadata(x):
 
 
 # Create function to get metadata from json file as the dataframe 
-def get_metadata_df(json_path):
+def get_json_metadata_df(json_path):
     """
     Create a dataframe containing track ID and columns in the get_metadata functions from the label.json file
     
@@ -82,13 +82,89 @@ def get_metadata_df(json_path):
     # Apply get_metadata function to get the required meta data
     metadata_df = metadata['tracks'].apply(get_metadata).reset_index()
     metadata_df = metadata_df.rename(columns={"index":"track_id"})
+    # Add a new 'Characteristic' column and leave it blank (using NaN or empty string as placeholder)
+    metadata_df['characteristic'] = np.nan  # Use np.nan for missing values or '' for an empty string
     
     return metadata_df
 
-#everything_meta_df = kaggle_df + spotify_df 
+# Define a function to clean the characteristics column in the CSV metadata.
+def clean_characteristics(characteristic, words_to_remove):
+    """
+    Cleans up the 'characteristic' column by removing unwanted words.
+    
+    Parameters:
+    - characteristic: The raw characteristic string from the CSV file.
+    - words_to_remove: A set of words to be removed from each characteristic string.
+
+    Returns:
+    - A cleaned-up characteristic string with unwanted words removed.
+    """
+    # Check for NaN and return an empty string if found.
+    if pd.isna(characteristic):
+        return ""
+    # Split the characteristic string into individual words.
+    words = [word.strip() for word in characteristic.split(',')]
+    # Remove any unwanted words.
+    cleaned_words = [word for word in words if word not in words_to_remove and word != ""]
+    # Reassemble the cleaned words into a string.
+    return ', '.join(cleaned_words)
+
+# Define a function to read and clean CSV metadata.
+def get_csv_metadata(csv_path):
+    """
+    Reads and cleans metadata from a CSV file.
+
+    Parameters:
+    - csv_file_path: The file path to the CSV file containing metadata.
+
+    Returns:
+    - A pandas DataFrame containing cleaned track metadata.
+    """
+    # Define the columns to read from the CSV file.
+    columns_to_read = ['Track ID', 'Album Name', 'Genre', 'Track Name', 'Artists', 'Characteristics']
+
+    # Set up a renaming map to standardize column names.
+    column_rename_map = {
+        'Track ID': 'track_id',
+        'Album Name': 'album',
+        'Genre': 'genre',
+        'Track Name': 'name',
+        'Artists': 'artist',
+        'Characteristics': 'characteristic'
+    }
+
+    # Define words to be removed from the 'characteristic' column.
+    words_to_remove = {"melodic","avant-garde","rhythmic", "atmospheric", "instrumental", "sampling", "ballad",
+                   "concept album", "progressive", "acoustic", "lo-fi", "LGBT", "technical",
+                   "improvisation", "drug", "political", "uncommon time signatures", "minimalistic",
+                   "philosophical", "vulgar", "crime", "violence", "autumn", "deadpan", "tropical",
+                   "alienation", "winter", "Christian", "space", "science fiction", "alcohol",
+                   "folklore", "self-hatred", "religious", "chamber music", "protest", "apocalyptic",
+                   "satirical", "forest", "serious", "rain", "suicide", "misanthropic", "apathetic",
+                   "disturbing", "tribal", "polyphonic", "ritualistic", "vocal group", "nihilistic",
+                   "mythology", "war", "history", "choral", "medieval", "pagan", "hateful", "occult",
+                   "infernal", "natural", "suite", "microtonal", "desert", "seasonal",
+                   "a cappella", "Islamic", "novelty", "anarchism", "martial", "parody", "sports",
+                   "Christmas", "Wall of Sound", "paranormal", "funereal", "patriotic", "concerto",
+                   "oratorio", "generative music", "lobit", "anti-religious", "atonal", "waltz",
+                   "rock opera", "madrigal", "nationalism", "string quartet", "sonata", "Halloween",
+                   "fairy tale", "skit", "mood", "poem", "medley", "mashup", "interlude", "satanic",
+                   "aleatory", "theme", "jingle", "symphony", "tone poem", "hymn", "movement",
+                   "holiday", "opera", "ensemble", "monologue","urban","repetitive","drug","complex"}  
+
+    # Load the CSV file, filtering for specified columns and applying the renaming map.
+    df = pd.read_csv(csv_path, usecols=columns_to_read, encoding='utf-8-sig')
+    df.rename(columns=column_rename_map, inplace=True)
+
+    # Clean the 'characteristic' column by applying the clean_characteristics function.
+    df['characteristic'] = df['characteristic'].apply(lambda x: clean_characteristics(x, words_to_remove))
+
+    return df
+
+
 
 # Create function to get completed df with vector and meta data
-def get_completed_df(json_path, song_path):
+def get_completed_df(json_path,csv_path, song_path):
     """
     Create a complete data frame containing meta data from labels.json file and embedded vector 
     
@@ -106,12 +182,12 @@ def get_completed_df(json_path, song_path):
     id = [song[:-4] for song in songs_id]
     vector_df = pd.DataFrame({'track_id':id, "vector": vectors})
     
-    # Create metadata_df and join with vector_idf for a completed df
-    metadata_df = get_metadata_df(json_path)
-    #spotify_metadata_df = get_metadata_df(csv_path)
-    
+    # Create consolidated metadata_df and join with vector_idf for a completed df
+    json_metadata_df = get_json_metadata_df(json_path)
+    csv_metadata_df = get_csv_metadata(csv_path)
+    complete_metadata_df = pd.concat([json_metadata_df, csv_metadata_df], axis=0, ignore_index=True)
 
-    completed_df = pd.merge(metadata_df, vector_df, on="track_id", how='inner')
+    completed_df = pd.merge(complete_metadata_df, vector_df, on="track_id", how='inner')
 
     return completed_df
 
