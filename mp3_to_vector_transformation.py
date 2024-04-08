@@ -45,7 +45,7 @@ def vector_embedding(song_path, p):
     songs = os.listdir(song_path)
 
     # Use ThreadPoolExecutor for parallelization
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ProcessPoolExecutor() as executor:
         # Submit tasks to executor for each song
         futures = [executor.submit(embed_song, p, song_path, song) for song in songs]
         
