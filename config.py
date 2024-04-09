@@ -28,3 +28,8 @@ def connect_AstraDB():
 
     print("Connected to Astra DB")
     return db
+
+def getOpenAIKey():
+
+    api_key = "add_your_key"
+    return api_key
