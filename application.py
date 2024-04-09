@@ -5,7 +5,7 @@ from flask import Flask, render_template, redirect, request, flash, session, url
 
 import model
 import pandas as pd
-import vectorImpl
+#import vectorImpl
 pd.options.mode.chained_assignment = None
 import logging
 
@@ -39,44 +39,27 @@ def show_login():
 @app.route("/login", methods=["POST"])
 def process_login():
     email = request.form.get("email")
-    user = model.get_user_from_email(email)
-
-    if user == None:
-        flash ("This user is not registered yet. You can sign up below.")
-        model.add_pageview(user_id=None, item_id=None, page="login", activity_type="non-registered id / incorrect details",rating=None) #pageview
-        return redirect('login')
-    else:
-        session['user'] = user.id
-        model.add_pageview(user_id=user.id, item_id=None, page="login", activity_type="successful login",rating=None) #pageview
-        return redirect(url_for('instructions_basic', id=user.id, round=0))
+    model.add_pageview(item_id=None, page="login", activity_type="successful login",rating=None) #pageview
+    return redirect(url_for('instructions_basic'))
 
 
-@app.route("/find_similarity")
-def find_similarity(id, round=0):
+'''@app.route('/upload', methods=['POST'])
+def upload():
+    if 'file' in request.files:
+        file = request.files['file']
+        # Save the file to the application folder
+        file.save('/data/input_song.mp3')
+        # Here you can process the data or extract any information you need
+        # For example, let's pass the filename to the next page
+        filename = file.filename
+        return redirect('/next?filename=' + filename)
+    return 'No file uploaded.'
 
-    vectorImpl.similarity()
-
-
-
-
-
-
-    model.add_pageview(user_id=session["user"], item_id=None, page="recommender_algorithm", activity_type= 'used recommender ' + str(algo1_id[0].algorithm)[13:].upper(), rating=None) #pageview
-
-    model.add_pageview(user_id=session["user"], item_id=None, page="recommender_algorithm", activity_type="finish recommender computation", rating=None) #pageview
-    # job = queue.enqueue(task_function, user_id, id,round)
-    # job.delete()
-    return redirect(url_for('view_recommendations', id=id,round=round))
-
-# Showing recommendations. Top 10 are taken by prediction value.
-@app.route("/view_recommendations/<int:id>/<int:round>")
-def view_recommendations(id,round):
-
-
-   # code to get the recommendations and display
-
-
-    return render_template(f"show_similar_songs", id=id)
+@app.route('/next')
+def next():
+    filename = request.args.get('filename')
+    # Pass the filename to the template
+    return render_template('next.html', filename=filename)'''
 
 
 @app.route("/logout")
