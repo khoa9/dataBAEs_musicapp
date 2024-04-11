@@ -1,3 +1,5 @@
+multi_char_classifier.joblib
+multi_char_classifier.pkl
 similiarity_vector_emb_testing
 __pycache__/config.cpython-311.pyc
 __pycache__/feature1.cpython-311.pyc
