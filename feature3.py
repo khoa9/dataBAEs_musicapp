@@ -4,7 +4,7 @@ import config
 import json
 
 def get_fun_fact(Artist, Album, songname):
-    client = OpenAI(api_key="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")
+    client = OpenAI(api_key=config.getOpenAIKey())
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
