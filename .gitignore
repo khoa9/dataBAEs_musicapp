@@ -4,3 +4,5 @@ __pycache__/feature1.cpython-311.pyc
 __pycache__/mp3_to_vector_transformation.cpython-311.pyc
 multi_char_classifier.joblib
 multi_char_classifier.pkl
+__pycache__/feature3.cpython-311.pyc
+.DS_Store

@@ -33,6 +33,6 @@ def search_similar(input_song_vector):
   #similar_songs = music_collection_object.vector_find(input_song_v, limit=15, fields={"artist", "$vector","genre","album"})
 
 
-  similar_songs = music_collection_object.vector_find(input_song_vector, limit=15,fields={"track_id","artist", "genre","name", "album"})
+  similar_songs = music_collection_object.vector_find(input_song_vector, limit=5,fields={"track_id","artist", "genre","name", "album"})
   similar_songs_df = pd.DataFrame(similar_songs)
   return similar_songs_df
