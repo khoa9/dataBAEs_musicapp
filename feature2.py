@@ -1,44 +1,20 @@
-import pickle
 import numpy as np
+from tensorflow.keras.models import load_model
 
 def characteristic_predict(music_vector, model_name):
-    '''
-    This function is use to predict all the characteristics of a song based on its vector
-    
-    Parameters:
-    - music_vector: music file after being embedded into flat vector
-    - model_name: name of the classifier model
-    '''
-    
-    with open(model_name, 'rb') as file:
-        loaded_model = pickle.load(file)
+    loaded_model = load_model(model_name)
 
-    labels = ['aggressive', 'angry', 'anxious', 'bittersweet', 'calm',
-       'chaotic', 'cold', 'conscious', 'dark', 'depressive', 'eclectic',
-       'energetic', 'epic', 'ethereal', 'existential', 'happy', 'heavy',
-       'hypnotic', 'introspective', 'lethargic', 'lonely', 'longing', 'love',
-       'lush', 'manic', 'meditative', 'melancholic', 'mellow', 'mysterious',
-       'noisy', 'ominous', 'optimistic', 'passionate', 'peaceful',
-       'pessimistic', 'playful', 'romantic', 'sad', 'scary', 'sensual',
-       'sentimental', 'sexual', 'soft', 'sombre', 'soothing', 'surreal',
-       'suspenseful', 'uplifting', 'warm']
+    labels =['Calm/Peaceful', 'Dark/Intense', 'Energetic/Excited', 'Happy/Positive', 'Mysterious/Abstract', 'Romantic/Emotional', 'Sad/Negative', 'Thoughtful/Contemplative']
     
+    music_vector = np.array(music_vector)
     test_data = music_vector.reshape(1,-1)
     
     predictions = loaded_model.predict(test_data)
-    
-    flattened_array=predictions.toarray().flatten()
+    flattened_array = (predictions.flatten() > 0.5).astype(int)  # Assuming sigmoid output
     
     indices_with_ones = [index for index, value in enumerate(flattened_array) if value == 1]
-
-    # Map indices to labels
     selected_labels = [labels[index] for index in indices_with_ones]
     
-    moodless =['neutral',' ambient']
+    moodless =['neutral', 'ambient']
     
-    if len(selected_labels) > 0:
-        return selected_labels
-    else:
-        return moodless
-
-
+    return selected_labels if selected_labels else moodless
