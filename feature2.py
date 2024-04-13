@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import load_model # type: ignore
 
 def characteristic_predict(music_vector, model_name):
     loaded_model = load_model(model_name)
