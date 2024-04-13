@@ -20,6 +20,6 @@ def search_similar(input_song_vector):
 
   #Extracting from AstraDB - the collection object
   music_collection_object = db.collection(collection_name)
-  similar_songs = music_collection_object.vector_find(input_song_vector, limit=5,fields={"track_id","name","album","artist", "genre" })
+  similar_songs = music_collection_object.vector_find(input_song_vector, limit=10,fields={"track_id","name","album","artist", "genre" })
   similar_songs_df = pd.DataFrame(similar_songs)
   return similar_songs_df
