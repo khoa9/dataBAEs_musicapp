@@ -12,3 +12,4 @@ multi_char_classifier.joblib
 multi_char_classifier.pkl
 .DS_Store
 __pycache__/feature2.cpython-311.pyc
+__pycache__/spotify_get_url.cpython-311.pyc
