@@ -8,7 +8,7 @@ from gradio import themes
 from feature3 import get_fun_fact, get_mood_fact
 from feature2 import characteristic_predict
 import tensorflow as tf
-
+from spotify_get_url import get_spotify_preview_url
 
 model_path = '/Users/bach/Documents/MP3-Project/MP3_Project_Git/dataBAEs_musicapp/my_model_weighted.h5'
 
@@ -31,7 +31,16 @@ def process_song(uploaded_file_path):
     mp3 = embed_song(uploaded_file_path)
     result = search_similar(mp3)
     print(result)
-    result = result.drop(columns=['_id','track_id','$similarity'])
+    result['preview_url'] = result['track_id'].apply(get_spotify_preview_url)
+
+    # Generate the HTML for the audio players
+    def audio_player_html(row):
+        if pd.notna(row['preview_url']):
+            return f"<audio controls src='{row['preview_url']}'></audio>"
+        return "No preview available"
+    result['audio_player'] = result.apply(audio_player_html, axis=1)
+    result = result.drop(columns=['_id','track_id','$similarity','preview_url'])
+
     artist = result['artist'].iloc[0]
     album = result['album'].iloc[0]
     name = result['name'].iloc[0]
