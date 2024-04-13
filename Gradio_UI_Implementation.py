@@ -31,6 +31,8 @@ def process_song(uploaded_file_path):
     mp3 = embed_song(uploaded_file_path)
     result = search_similar(mp3)
     print(result)
+    result = result.drop_duplicates(subset=['track_id'])
+    result = result.iloc[:5]
     result['preview_url'] = result['track_id'].apply(get_spotify_preview_url)
 
     # Generate the HTML for the audio players
