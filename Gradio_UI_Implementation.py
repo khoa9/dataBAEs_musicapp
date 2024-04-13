@@ -59,7 +59,7 @@ def process_song(uploaded_file_path):
         fun_fact = "Error in decoding fun fact data."
     except Exception as e:
         print("Error fetching fun fact:", str(e))
-        fun_fact = "Could not retrieve fun fact due to an error."
+        fun_fact = "Put more money in! You probably don't have the API key. Error"
 
     try:
         mood_fact_data = get_mood_fact(mood_prediction)
@@ -72,7 +72,7 @@ def process_song(uploaded_file_path):
         mood_fact = "Error in decoding mood fact data."
     except Exception as e:
         print("Error fetching mood fact:", str(e))
-        mood_fact = "Could not retrieve mood fact due to an error."
+        mood_fact = "I'm not in the mood to give you a mood fact. You haven't put the OPEN API KEy. Error!"
 
     html_result = result.to_html(escape=False, classes="data", index=False)
     styled_html_result = f"""
