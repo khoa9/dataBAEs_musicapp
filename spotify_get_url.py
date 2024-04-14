@@ -6,8 +6,8 @@ def get_spotify_preview_url(track_id,market='US'):
         'https://accounts.spotify.com/api/token',
         {
             'grant_type': 'client_credentials',
-            'client_id': 'fb04886b751a409e81639f7bc1891989',  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
-            'client_secret': '49afad6a5e2843d8807a0c7e8338600f',  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
+            'client_id': 'key',  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
+            'client_secret': 'key',  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
         },
     )
     auth_response_data = auth_response.json()
