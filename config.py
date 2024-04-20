@@ -31,5 +31,10 @@ def connect_AstraDB():
 
 def getOpenAIKey():
 
-    api_key = "add_your_key"
+    api_key = "##"
     return api_key
+
+def getSpotifyToken():
+    
+    user_token = "##"
+    return user_token
