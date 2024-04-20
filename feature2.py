@@ -15,6 +15,6 @@ def characteristic_predict(music_vector, model_name):
     indices_with_ones = [index for index, value in enumerate(flattened_array) if value == 1]
     selected_labels = [labels[index] for index in indices_with_ones]
     
-    moodless =['neutral', 'ambient']
+    moodless =['Neutral/Ambient']
     
     return selected_labels if selected_labels else moodless

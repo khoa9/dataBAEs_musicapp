@@ -13,3 +13,8 @@ multi_char_classifier.pkl
 .DS_Store
 __pycache__/feature2.cpython-311.pyc
 __pycache__/spotify_get_url.cpython-311.pyc
+config.py
+spotify_access_token.py
+__pycache__/Gradio_UI_Search_Implementation_w_audio.cpython-311.pyc
+__pycache__/spotify_playlist.cpython-311.pyc
+.gitignore

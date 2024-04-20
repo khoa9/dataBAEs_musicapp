@@ -9,13 +9,17 @@ from feature3 import get_fun_fact, get_mood_fact
 from feature2 import characteristic_predict
 import tensorflow as tf
 from spotify_get_url import get_spotify_preview_url
+from mutagen.mp3 import MP3
+from mutagen.easyid3 import EasyID3
+import logging
+import os
+from concurrent.futures import ThreadPoolExecutor
+import json
 
 model_path = '/Users/bach/Documents/MP3-Project/MP3_Project_Git/dataBAEs_musicapp/my_model_weighted.h5'
 
 
-import gradio as gr
-import json  # Import the json module
-
+logging.basicConfig(filename='/data/gradio.log', level=logging.INFO)
 js_func = """
 function refresh() {
     const url = new URL(window.location);
@@ -28,9 +32,18 @@ function refresh() {
 """
 
 def process_song(uploaded_file_path):
+    filename = os.path.splitext(os.path.basename(uploaded_file_path))[0]
+    audio = MP3(uploaded_file_path, ID3=EasyID3)
+    # Fetching artist, album, and title information
+    artist = audio.get('artist', ['Unknown Artist'])[0]
+    album = audio.get('album', ['Unknown Album'])[0]
+    title = audio.get('title', ['Unknown Title'])[0]
+
     mp3 = embed_song(uploaded_file_path)
     result = search_similar(mp3)
+
     print(result)
+    
     result = result.drop_duplicates(subset=['track_id'])
     result = result.iloc[:5]
     result['preview_url'] = result['track_id'].apply(get_spotify_preview_url)
@@ -40,18 +53,16 @@ def process_song(uploaded_file_path):
         if pd.notna(row['preview_url']):
             return f"<audio controls src='{row['preview_url']}'></audio>"
         return "No preview available"
+    
     result['audio_player'] = result.apply(audio_player_html, axis=1)
     result = result.drop(columns=['_id','track_id','$similarity','preview_url'])
 
-    artist = result['artist'].iloc[0]
-    album = result['album'].iloc[0]
-    name = result['name'].iloc[0]
     mood_prediction = characteristic_predict(mp3, model_path)
     styled_mood_predictions = ['<b style="color: #c305ed;">' + mood + '</b>' for mood in mood_prediction]
     mood_string = '<span style="color: black;">This song gives </span>' + '<span style="color: black;">, </span>'.join(styled_mood_predictions) + '<span style="color: black;"> mood. </span>'
     
     try:
-        fun_fact_data = get_fun_fact(artist, album, name)
+        fun_fact_data = get_fun_fact(artist,album,filename)
         fun_fact_dict = json.loads(fun_fact_data)
         if 'fun_fact' in fun_fact_dict:
             fun_fact = fun_fact_dict['fun_fact']
@@ -106,8 +117,8 @@ def process_song(uploaded_file_path):
 
 
 with gr.Blocks(js=js_func) as demo:
-    gr.Markdown("# Find Similar Songs")
-    gr.Markdown("Upload an MP3 file to find similar songs. Discover fun facts about similar tracks!")
+    gr.Markdown("# Welcome to Databae's Audio Platform.")
+    gr.Markdown("Upload an MP3 file to find similar songs. Discover fun facts and mood prediction of your tracks!!")
     
     with gr.Row():
         file_input = gr.File(label="Upload MP3 File", type="filepath")
@@ -117,4 +128,8 @@ with gr.Blocks(js=js_func) as demo:
     
     submit_button.click(process_song, inputs=file_input, outputs=output)
 
+# Apply queue settings to manage load effectively
+demo.queue(default_concurrency_limit=4)  # Adjust based on your needs and resources
+
+# Launch the application with a specific number of workers
 demo.launch(share=True)
