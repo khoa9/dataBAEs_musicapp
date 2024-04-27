@@ -12,13 +12,10 @@ import os
 #csv_file_path will point to the csv obtained from Step 1
 #output_csv_path will be the file used to download song from Step 3.
 
-#client_id = 'fb04886b751a409e81639f7bc1891989'
-#client_secret = '49afad6a5e2843d8807a0c7e8338600f'
-
-client_id = 'c8084650ded546108cb4ea0f685f1482'
-client_secret = 'dfe76d760b9f4e06aff873e52be8b39f'
-csv_file_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/Album_ID_Dump/extracted_spotify_ids_diversity.csv'
-output_csv_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/Metadata/song_get_response.csv'
+client_id = '#'
+client_secret = '#'
+csv_file_path = 'album_id_list.csv'
+output_csv_path = 'track_id_list.csv'
 
 def get_access_token(client_id, client_secret):
     print("Requesting access token...")

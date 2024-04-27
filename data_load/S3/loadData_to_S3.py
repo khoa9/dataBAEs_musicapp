@@ -5,7 +5,7 @@ import time
 import concurrent.futures
 
 # Example usage
-folder_path = '../../data/raw_songs'  # Update this to your folder path
+folder_path = '../../data/raw_input_songs'  # Update this to your folder path
 s3_folder = 'audio/training_data'  # Folder within the S3 bucket
 bucket_name = 'mp3project-bucket'  # Update this to your S3 bucket name
 aws_region = os.environ.get('AWS_REGION', 'us-east-2')  # Use AWS_REGION environment variable if set, else default

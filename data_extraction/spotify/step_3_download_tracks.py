@@ -7,10 +7,10 @@ import time
 #This script will look at all the track_id obtained in Step 2 and download it to subfolder of its genre. 
 
 # Set the path to the CSV file containing the track details
-csv_file_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/Metadata/song_get_response_previews.csv'
+csv_file_path = 'track_id_list.csv'
 
 # Set the base path for the folder where files will be saved
-base_download_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/mp3/'
+base_download_path = '../../data/raw_input_songs'
 
 # Function to download the preview and save it with the track ID as its name
 def download_preview(preview_url, genre, track_id):

@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 # Will need a folder of html saved from Rateyourmusic.com (Chart). For example, https://rateyourmusic.com/charts/top/album/all-time/g:hip%2dhop/
 # Folder Structure should be: HTML/subfolder(s)
 # Paths
-directory_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/html_dump/diversity'
-output_csv_path = '/Users/bach/Documents/MP3-Project/ID-Scrap/Album_ID_Dump/extracted_spotify_ids_diversity.csv'
+directory_path = '/html_dumps'
+output_csv_path = 'album_id_list.csv'
 
 def extract_spotify_ids_and_characteristics(html_content, genre):
     soup = BeautifulSoup(html_content, 'lxml')
