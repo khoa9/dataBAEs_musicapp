@@ -1,8 +1,13 @@
 import requests
 
+import config
+
+'''
 client_id = '##'  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
 client_secret = '##'
+'''
 
+client_id,client_secret = config.getSpotifyClientCredentials()
 
 def get_spotify_preview_url(track_id,market='US'):
     # Replace 'your_client_id' and 'your_client_secret' with your Spotify API credentials
@@ -10,8 +15,8 @@ def get_spotify_preview_url(track_id,market='US'):
         'https://accounts.spotify.com/api/token',
         {
             'grant_type': 'client_credentials',
-            'client_id': '##',  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
-            'client_secret': '##',  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
+            'client_id': client_id,  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
+            'client_secret': client_secret,  # Exposed credentials (please reset these in your Spotify Developer Dashboard)
         },
     )
     auth_response_data = auth_response.json()
@@ -38,8 +43,8 @@ def search_spotify_song(song_name, artist_name, market='US'):
         'https://accounts.spotify.com/api/token',
         {
             'grant_type': 'client_credentials',
-            'client_id': '##',
-            'client_secret': '##',
+            'client_id': client_id,
+            'client_secret': client_secret,
         }
     )
 

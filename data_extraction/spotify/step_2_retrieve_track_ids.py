@@ -6,14 +6,17 @@ import concurrent.futures
 import time 
 import os
 
+import config
 
 #Looking up all the AlbumID Scrapped from Step 1, and retrieve all track_ID from the album. Only retain track_ID that contains a Preview_URL.
 # Main script setup
 #csv_file_path will point to the csv obtained from Step 1
 #output_csv_path will be the file used to download song from Step 3.
 
-client_id = '#'
-client_secret = '#'
+'''client_id = '#'
+client_secret = '#'''
+
+client_id,client_secret = config.getSpotifyClientCredentials()
 csv_file_path = 'album_id_list.csv'
 output_csv_path = 'track_id_list.csv'
 

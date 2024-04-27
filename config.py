@@ -20,3 +20,9 @@ def getSpotifyToken():
     
     user_token = "##"
     return user_token
+
+
+def getSpotifyClientCredentials():
+    client_id = '#'
+    client_secret = '#'
+    return client_id,client_secret
