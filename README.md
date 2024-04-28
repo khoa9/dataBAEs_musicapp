@@ -244,9 +244,8 @@ pip install -r requirements.txt
 ```
 
 ### Important Note
-<span style="color:red">
-Ensure that the backend setup, including all data processing and storage in Astra DB, is fully completed before running `app.py`.
-</span>
+
+**Ensure that the backend setup, including all data processing and storage in Astra DB, is fully completed before running `app.py`.**
 
 The link provided at the beginning of this note is ran by using our team's credentials on different services (S3, DataStax, Spotify, OpenAI). Thus, if you want to run everything from your own and build your own application, you need to configure all of the config requirement and build the backend before running app.py
 
