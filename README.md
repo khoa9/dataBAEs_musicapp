@@ -26,20 +26,20 @@
 </p>
 <hr>
 
-##  Quick Links
+##  Table of contents
 
 > - [ Overview](#-overview)
 > - [ Features](#-features)
 > - [ Repository Structure](#-repository-structure)
 > - [ Modules](#-modules)
+> - [ Config Requirement](#-config-requirement)
+>  - [ Tech Stack Options](#-tech-stack-options)
 > - [ Getting Started](#-getting-started)
 >   - [ Installation](#-installation)
+>   - [ Important Note](#-important-note)
 >   - [ Running dataBAEs_musicapp](#-running-dataBAEs_musicapp)
->   - [ Tests](#-tests)
-> - [ Project Roadmap](#-project-roadmap)
 > - [ Contributing](#-contributing)
-> - [ License](#-license)
-> - [ Acknowledgments](#-acknowledgments)
+> - [ Final thoughts](#-final-thoughts)
 
 ---
 
