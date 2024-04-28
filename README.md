@@ -213,6 +213,7 @@ Please feel free to choose other tech options based on your needs:
     + Open-source: ChromaDB, Milvus, Pinecone, Weaviate, etc.
 - **LLM's integration:** LlamMa (2 or 3),  Claude, BERT, etc.
 
+---
 
 ##  Getting Started
 
